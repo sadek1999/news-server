@@ -27,6 +27,31 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
+        const newsCollection = client.db('newsDB').collection('news')
+        const userCollection= client.db('newsDB').collection('users')
+        // api for users......
+        app.post('/singup',async(req,res)=>{
+            const user=req.body;
+            const result=await userCollection.insertOne(user)
+            res.send(result)
+        })
+        app.get('/login/:email',async(req,res)=>{
+            const userEmail=req.params.email
+            const query={email:userEmail}
+            const result=await userCollection.findOne(query);
+            res.send(result);
+        })
+    //   api for news ......
+        app.get('/get', async (req, res) => {
+            const result = await newsCollection.find().toArray()
+            res.send()
+        })
+        app.post('/post', async (req, res) => {
+            const blog = req.body;
+            const result = await newsCollection.insertOne(blog)
+            res.send(result);
+        })
+
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
         // Send a ping to confirm a successful connection
