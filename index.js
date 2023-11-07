@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+require('dotenv').config()
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const app = express();
@@ -11,10 +12,10 @@ app.use(express.json());
 
 
 
-console.log(process.env.DB_PASS)
 
 
-const uri = `mongodb+srv://newsBlog:UesUR8PBvSDZqYQ3@cluster0.xtmekud.mongodb.net/?retryWrites=true&w=majority`;
+
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.xtmekud.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -30,22 +31,40 @@ async function run() {
         const newsCollection = client.db('newsDB').collection('news')
         const userCollection= client.db('newsDB').collection('users')
         // api for users......
-        app.post('/singup',async(req,res)=>{
+        app.post('/user',async(req,res)=>{
             const user=req.body;
             const result=await userCollection.insertOne(user)
             res.send(result)
         })
-        app.get('/login/:email',async(req,res)=>{
+        app.get("/getusers/:email",async(req,res)=>{
             const userEmail=req.params.email
+            // console.log(userEmail)
             const query={email:userEmail}
-            const result=await userCollection.findOne(query);
+            const result=await userCollection.findOne(query)
             res.send(result);
         })
     //   api for news ......
-        app.get('/get', async (req, res) => {
+        app.get('/getnews', async (req, res) => {
+            
             const result = await newsCollection.find().toArray()
-            res.send()
+            res.send(result)
         })
+
+        app.get('/news', async (req, res) => {
+            let query = {}
+            console.log(req.query.email);
+           
+             if(req.query?.type){
+                query={type:req.query.type}
+             }
+            if (req.query?.email) {
+              query = { email: req.query.email }
+            }
+            console.log(query)
+            const result = await newsCollection.find(query).toArray()
+            res.send(result);
+          })
+
         app.post('/post', async (req, res) => {
             const blog = req.body;
             const result = await newsCollection.insertOne(blog)
