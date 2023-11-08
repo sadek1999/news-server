@@ -36,12 +36,17 @@ async function run() {
             const result=await userCollection.insertOne(user)
             res.send(result)
         })
-        app.get("/getusers/:email",async(req,res)=>{
+        app.get("/users/:email",async(req,res)=>{
             const userEmail=req.params.email
             // console.log(userEmail)
             const query={email:userEmail}
             const result=await userCollection.findOne(query)
             res.send(result);
+        })
+        app.get('/getuser', async (req, res) => {
+            
+            const result = await userCollection.find().toArray()
+            res.send(result)
         })
     //   api for news ......
         app.get('/getnews', async (req, res) => {
