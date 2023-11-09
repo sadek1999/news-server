@@ -31,7 +31,10 @@ async function run() {
         const newsCollection = client.db('newsDB').collection('news')
         const userCollection= client.db('newsDB').collection('users')
         const commentCollection= client.db('newsDB').collection('comments')
-        // api for users......
+        const myCollection= client.db('newsDB').collection('mynews')
+
+        // api for users---------------------------------------------------------------
+        // ---------------------------------------------------------------------------
         app.post('/user',async(req,res)=>{
             const user=req.body;
             const result=await userCollection.insertOne(user)
@@ -56,7 +59,8 @@ async function run() {
         //     console.log(result)
         //     res.send(result)
         // })
-    //   api for news ......
+    //   api for news -----------------------------------------------------------------
+    // --------------------------------------------------------------------------------
         app.get('/getnews', async (req, res) => {
             
             const result = await newsCollection.find().toArray()
@@ -89,8 +93,23 @@ async function run() {
             const result = await newsCollection.insertOne(blog)
             res.send(result);
         })
+        // api for wishlist .......................................................
+        // --------------------------------------------------------------------
 
-        // api for the comment 
+        app.get('/wishlist',async(req,res)=>{
+            const result=await myCollection.find().toArray();
+            res.send()
+        })
+
+        app.post('/wishlist',async(req,res)=>{
+            const blog=req.body;
+            console.log('hit wish')
+            const result=await myCollection.insertOne(blog)
+            res.result;
+        })
+
+        // api for the comment -----------------------------------------------
+        // -------------------------------------------------------------------
 
         app.get('/comment',async(req,res)=>{
             let query={};
